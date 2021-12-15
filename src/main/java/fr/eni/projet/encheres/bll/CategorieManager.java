@@ -4,9 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import fr.eni.projet.encheres.bo.Categorie;
+import fr.eni.projet.encheres.bo.user.Vendeur;
 import fr.eni.projet.encheres.dal.DALException;
 import fr.eni.projet.encheres.dal.DAO;
+import fr.eni.projet.encheres.dal.DAOCategorie;
 import fr.eni.projet.encheres.dal.DAOFactory;
+import fr.eni.projet.encheres.dal.DAOUtilisateur;
 
 /**
  * @author Alexandre Mchich
@@ -85,7 +88,17 @@ public class CategorieManager implements AbstractManager<Categorie> {
 		return categorie;
 
 	}
+	public Categorie getCategorieViaNom(String nom) throws BLLException {
+		Categorie c = null;
 
+		try {
+			c = this.daoCategorie).selectByNom(nom);
+		} catch (DALException e) {
+			System.err.println("echec récupération Categorie");
+			throw new BLLException("echec récupération Categorie", e);
+		}
+
+		return user;
 	public void nettoyerBDD() throws BLLException {
 		try {
 			this.daoCategorie.deleteAll();

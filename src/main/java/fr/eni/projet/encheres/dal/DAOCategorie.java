@@ -1,5 +1,7 @@
 package fr.eni.projet.encheres.dal;
 
+import java.util.List;
+
 import fr.eni.projet.encheres.bo.Categorie;
 
 /**
@@ -8,6 +10,6 @@ import fr.eni.projet.encheres.bo.Categorie;
  */
 public interface DAOCategorie extends DAO<Categorie> {
 
-	void afficherTruc();
+	public List<Categorie> selectByNom(String nom) throws DALException;
 	
 }
