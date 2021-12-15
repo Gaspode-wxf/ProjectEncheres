@@ -10,6 +10,6 @@ import fr.eni.projet.encheres.bo.Categorie;
  */
 public interface DAOCategorie extends DAO<Categorie> {
 
-	public List<Categorie> selectByNom(String nom) throws DALException;
+	public Categorie selectByNom(String nom) throws DALException;
 	
 }

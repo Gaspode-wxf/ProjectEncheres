@@ -92,13 +92,15 @@ public class CategorieManager implements AbstractManager<Categorie> {
 		Categorie c = null;
 
 		try {
-			c = this.daoCategorie).selectByNom(nom);
+			c = ((DAOCategorie) this.daoCategorie).selectByNom(nom);
 		} catch (DALException e) {
 			System.err.println("echec récupération Categorie");
 			throw new BLLException("echec récupération Categorie", e);
 		}
 
-		return user;
+		return c;
+		
+	}
 	public void nettoyerBDD() throws BLLException {
 		try {
 			this.daoCategorie.deleteAll();

@@ -2,6 +2,8 @@ package fr.eni.projet.encheres.dal;
 
 import java.util.List;
 
+import fr.eni.projet.encheres.bo.Categorie;
+
 /**
  * @author William "Gaspode" Freyer
  *
@@ -21,5 +23,7 @@ public interface DAO<T> {
 	public void insert(T t) throws DALException;
 
 	public void deleteAll() throws DALException;
+
+	
 
 }
