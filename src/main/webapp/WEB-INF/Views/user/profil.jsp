@@ -119,7 +119,7 @@ CSS
 
 <div>
 <input type="submit" value="Modifier">
-<input type="submit" value="Supprimer" formnovalidate="formnovalidate" formmethod="DELETE">
+<input type="submit" value="Supprimer" formnovalidate="formnovalidate" formmethod="get" formaction="ServletSupprimerCompte">
 <input type="submit" value="Annuler" formaction="ServletAccueil" formnovalidate="formnovalidate">
 
 </div>
