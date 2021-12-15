@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import fr.eni.projet.encheres.bo.Categorie;
+import fr.eni.projet.encheres.bo.Enchere;
 import fr.eni.projet.encheres.dal.ConnectionProvider;
 import fr.eni.projet.encheres.dal.DALException;
 import fr.eni.projet.encheres.dal.DAOCategorie;
@@ -79,10 +80,30 @@ public class CategorieDAOJdbcImpl extends DAOJdbcImpl<Categorie> implements DAOC
 		}
 	}
 
-	@Override
-	public void afficherTruc() {
-		System.out.println("truc");
 		
+
+	@Override
+	public Categorie selectByNom(String libelle) throws DALException {
+		String sql = select id, libelle from Categories where libelle like?;
+		Categorie c = null;
+		try (Connection con = ConnectionProvider.getConnection(); PreparedStatement stmt = con.prepareStatement(sql);) {
+
+			System.out.println(libelle);
+			stmt.setString(1, libelle);
+			
+			try (ResultSet rs = stmt.executeQuery();) {
+
+				rs.next();
+
+				c = createFromRS(rs);
+			}
+
+		} catch (SQLException e) {
+
+			throw new DALException("erreur de requete Select by Nom", e);
+		}
+
+		return c;
 	}
 
 }
