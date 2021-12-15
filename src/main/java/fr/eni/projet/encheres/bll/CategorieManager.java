@@ -92,7 +92,7 @@ public class CategorieManager implements AbstractManager<Categorie> {
 		Categorie c = null;
 
 		try {
-			c = ((DAOCategorie) this.daoCategorie).selectByNom(nom);
+			c = ((DAOCategorie) this.daoCategorie).selectByNom(libelle);
 		} catch (DALException e) {
 			System.err.println("echec récupération Categorie");
 			throw new BLLException("echec récupération Categorie", e);
