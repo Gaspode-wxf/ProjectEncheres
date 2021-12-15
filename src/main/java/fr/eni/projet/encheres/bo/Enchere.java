@@ -23,7 +23,6 @@ public class Enchere {
 	private Vendeur vendeur;
 	private Date dateEnchere;
 	private int montantEnchere;
-//	private List<Enchere> historique = new ArrayList<Enchere>();
 
 	public Enchere() {
 
@@ -45,9 +44,11 @@ public class Enchere {
 	public Enchere(Date dateEnchere, int montantEnchere, Article article, Vendeur vendeur) {
 
 		this.vendeur = vendeur;
+		vendeur.ajouterEnchere(this);
 		this.idEnchere[1]= vendeur.getId();
 		
 		this.article = article;
+		article.ajouterEnchere(this);
 		this.idEnchere[0] = article.getId();
 		this.dateEnchere = dateEnchere;
 		this.montantEnchere = montantEnchere;
@@ -91,6 +92,7 @@ public class Enchere {
 	public void setArticle(Article article) {
 		this.article = article;
 		this.idEnchere[0] = article.getId();
+		article.ajouterEnchere(this);
 
 	}
 
@@ -101,6 +103,7 @@ public class Enchere {
 	public void setVendeur(Vendeur vendeur) {
 		this.vendeur = vendeur;
 		this.idEnchere[1]=vendeur.getId();
+		vendeur.ajouterEnchere(this);
 	}
 
 	@Override

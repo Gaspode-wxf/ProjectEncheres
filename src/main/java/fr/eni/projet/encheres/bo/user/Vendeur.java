@@ -48,11 +48,14 @@ public class Vendeur extends Utilisateur {
 
 	public void setListeArticles(List<Article> listeArticles) {
 		this.listeArticles = listeArticles;
+		for(Article art : listeArticles) {
+			art.setUtilisateur(this);
+		}
 	}
 
 	public void ajouterArticle(Article article) {
 		this.listeArticles.add(article);
-		article.setIdUtilisateur(this);
+		
 	}
 
 	/**
@@ -67,8 +70,14 @@ public class Vendeur extends Utilisateur {
 	 */
 	public void setListeEnchere(List<Enchere> listeEnchere) {
 		this.listeEnchere = listeEnchere;
+		for(Enchere enc : listeEnchere) {
+			enc.setVendeur(this);
+		}
 	}
-
+	
+	public void ajouterEnchere(Enchere enc) {
+		this.listeEnchere.add(enc);
+	}
 	@Override
 	public void setAdministrateur(boolean administrateur) {
 		if(!this.isAdministrateur())

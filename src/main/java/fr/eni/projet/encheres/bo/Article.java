@@ -4,15 +4,15 @@
 package fr.eni.projet.encheres.bo;
 
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import fr.eni.projet.encheres.bo.user.Utilisateur;
 import fr.eni.projet.encheres.bo.user.Vendeur;
 
 /**
  * @author Greg
- *
+ * @update William
  */
 public class Article {
 
@@ -25,115 +25,86 @@ public class Article {
 	private int prixInitial;
 	private int prixVente;
 	private int etatVente;
-//	private Integer idUtilisateur;
-//	private Integer idCategorie;
 
-	// Attributs Utilisateur
-	private Utilisateur user;
-	List<Utilisateur> listeUser = new ArrayList<Utilisateur>();
-
-	// Attributs Adresse
-	private Adresse ads;
-
-//	// Attributs Vendeur
-//	private Vendeur vend;
-//	List<Vendeur> listeVendeur = new ArrayList<Vendeur>();
-
-	// Attributs Categorie
-	private Categorie cat;
-	List<Categorie> listeCat = new ArrayList<Categorie>();
-
-	// Attributs Enchere
-	private Enchere enc;
-	List<Enchere> listeEnc = new ArrayList<Enchere>();
+	// Attributs Utilisateur (le vendeur)
+	private Vendeur user;
 
 	// Attributs Retrait
 	private Retrait ret;
 
-//	// Méthodes Vendeur
-//	public Vendeur getVendeur() {
-//		return this.vend;
-//	}
-//  
-//	public Integer getIdVendeur() {
-//		return this.vend.getId();
-//	}
+	// Attributs Categorie
+	private Categorie cat;
 
-	// Méthodes Adresse
+	// Attributs Enchere
+	List<Enchere> listeEnc = new ArrayList<Enchere>();
+	protected int prixActuel;
+	protected Vendeur gagnant;
 
-	public Adresse getAdresse() {
-		return this.ads;
+	// Constructeurs
+
+	public Article() {
+		super();
 	}
 
-	public void setAdresse(Adresse ads) {
-		this.ads = ads;
-	}
+	public Article(String nomArticle, String description, Date dateDebut, Date dateFin, int prixInitial,
+			Categorie cat) {
+		super();
+		this.nomArticle = nomArticle;
+		this.description = description;
+		this.dateDebut = dateDebut;
+		this.dateFin = dateFin;
+		this.prixInitial = prixInitial;
+		this.cat = cat;
+		this.cat.ajouterArticle(this);
+		
+		}
 
 	// Méthodes Utilisateur
-	public Utilisateur getUtilisateur() {
-		this.user = (Vendeur) user;
-		((Vendeur) this.user).ajouterArticle(this);
+	public Vendeur getUtilisateur() {
 		return this.user;
 	}
 
-	public Integer getIdUtilisateur() {
-		return this.user.getId();
+	public void setUtilisateur(Vendeur ven) {
+		this.user = ven;
+		ven.ajouterArticle(this);
 	}
-
-	public void setIdUtilisateur(Integer id) {
-		this.user.setId(id);
-	}
-
-	public void setIdUtilisateur(Vendeur vend) {
-		this.user.setId(id);
-	}
-
-	public void setUtilisateur(Vendeur vend) {
-		this.user = vend;
-
-	}
-
-//	public void setIdUtilisateur(Utilisateur user) {
-//		this.idUtilisateur = user.getId();
-//	}
-
-//	public void setIdUtilisateur(Integer id) {
-//		this.idUtilisateur = id;
-//	}
 
 	// Méthodes Categorie
 	public Categorie getCategorie() {
-//		this.cat.ajouterArticle(this);
 		return this.cat;
 	}
 
 	public void setCategorie(Categorie cat) {
 		this.cat = cat;
+		cat.ajouterArticle(this);
 	}
-
-	public Integer getIdCategorie() {
-		return this.cat.getId();
-	}
-
-	public void setIdCategorie(Integer id) {
-		this.cat.setId(id);
-	}
-
-//	public void setIdCategorie(Categorie cat) {
-//		this.idCategorie = cat.getId();
-//	}
-//
-//	public void setIdCategorie(Integer id) {
-//		this.idCategorie = id;
-//	}
 
 	// Méthodes Enchere
-	public Enchere getEnchere() {
-		return this.enc;
+	public List<Enchere> getListeEncheres() {
+		return this.listeEnc;
 	}
 
-	public void setEnchere(Enchere enc) {
-		this.enc = enc;
+	public void setListeEnchere(List<Enchere> listeEnc) {
+		this.listeEnc = listeEnc;
+		if (!listeEnc.isEmpty()) {
+			this.prixActuel = listeEnc.get(listeEnc.size() - 1).getMontantEnchere();
+			this.gagnant = listeEnc.get(listeEnc.size() - 1).getVendeur();
+
+		}
+	}
+
+	public void ajouterEnchere(Enchere enc) {
+		this.listeEnc.add(enc);
+		this.prixActuel = enc.getMontantEnchere();
+		this.gagnant = enc.getVendeur();
+	}
+
+	public int getPrixActuel() {
+		return this.prixActuel;
+	}
+
+	public Vendeur getGagnant() {
+		return this.gagnant;
 	}
 
 	// Méthodes Retrait
@@ -146,133 +117,6 @@ public class Article {
 	}
 
 	// Methodes Article
-	public Article() {
-		super();
-	}
-
-	/**
-	 * @param nomArticle
-	 * @param description
-	 * @param dateDebut
-	 * @param dateFin
-	 * @param prixInitial
-	 * @param prixVente
-	 * @param etatVente
-	 */
-	public Article(String nomArticle, String description, Date dateDebut, Date dateFin, int prixInitial, int prixVente,
-			int etatVente) {
-		super();
-		this.nomArticle = nomArticle;
-		this.description = description;
-		this.dateDebut = dateDebut;
-		this.dateFin = dateFin;
-		this.prixInitial = prixInitial;
-		this.prixVente = prixVente;
-		this.etatVente = etatVente;
-	}
-
-	/**
-	 * @param idArticle
-	 * @param nomArticle
-	 * @param description
-	 * @param dateDebut
-	 * @param dateFin
-	 * @param prixInitial
-	 * @param prixVente
-	 * @param etatVente
-	 */
-	public Article(Integer id, String nomArticle, String description, Date dateDebut, Date dateFin, int prixInitial,
-			int prixVente) {
-		super();
-		this.id = id;
-		this.nomArticle = nomArticle;
-		this.description = description;
-		this.dateDebut = dateDebut;
-		this.dateFin = dateFin;
-		this.prixInitial = prixInitial;
-		this.prixVente = prixVente;
-
-	}
-
-	/**
-	 * @param id
-	 * @param nomArticle
-	 * @param description
-	 * @param dateDebut
-	 * @param dateFin
-	 * @param prixInitial
-	 * @param prixVente
-	 * @param utilisateur
-	 * @param categorie
-	 */
-	public Article(Integer id, String nomArticle, String description, Date dateDebut, Date dateFin, int prixInitial,
-			int prixVente, Utilisateur user, Categorie categorie) {
-		super();
-		this.id = id;
-		this.nomArticle = nomArticle;
-		this.description = description;
-		this.dateDebut = dateDebut;
-		this.dateFin = dateFin;
-		this.prixInitial = prixInitial;
-		this.prixVente = prixVente;
-		this.user.getId();
-		this.cat.getId();
-	}
-
-	/**
-	 * @param id
-	 * @param nomArticle
-	 * @param description
-	 * @param dateDebut
-	 * @param dateFin
-	 * @param prixInitial
-	 * @param prixVente
-	 * @param idUtilisateur
-	 * @param idCategorie
-	 */
-	public Article(Integer id, String nomArticle, String description, Date dateDebut, Date dateFin, int prixInitial,
-			int prixVente, Integer idUtilisateur, Integer idCategorie) {
-		super();
-		this.id = id;
-		this.nomArticle = nomArticle;
-		this.description = description;
-		this.dateDebut = dateDebut;
-		this.dateFin = dateFin;
-		this.prixInitial = prixInitial;
-		this.prixVente = prixVente;
-		this.user.getId();
-		this.cat.getId();
-	}
-
-	/**
-	 * @param id
-	 * @param nomArticle
-	 * @param description
-	 * @param dateDebut
-	 * @param dateFin
-	 * @param prixInitial
-	 * @param prixVente
-	 * @param user
-	 * @param cat
-	 * @param enc
-	 * @param ret
-	 */
-	public Article(Integer id, String nomArticle, String description, Date dateDebut, Date dateFin, int prixInitial,
-			int prixVente, Utilisateur user, Categorie cat, Enchere enc, Retrait ret) {
-		super();
-		this.id = id;
-		this.nomArticle = nomArticle;
-		this.description = description;
-		this.dateDebut = dateDebut;
-		this.dateFin = dateFin;
-		this.prixInitial = prixInitial;
-		this.prixVente = prixVente;
-		this.user = user;
-		this.cat = cat;
-		this.enc = enc;
-		this.ret = ret;
-
-	}
 
 	public Integer getId() {
 		return this.id;
@@ -345,10 +189,8 @@ public class Article {
 				.append(", description=").append(this.description).append(", dateDebut=").append(this.dateDebut)
 				.append(", dateFin=").append(this.dateFin).append(", prixInitial=").append(this.prixInitial)
 				.append(", prixVente=").append(this.prixVente).append(", etatVente=").append(this.etatVente)
-				.append(", idUtilisateur=").append(this.getIdUtilisateur()).append(", user=").append(this.user)
-				.append(", idCategorie=").append(this.getIdCategorie()).append(", cat=").append(this.cat)
-				.append(", enc=").append(this.enc).append(", listeEnc=").append(this.listeEnc).append(", ret=")
-				.append(this.ret).append("]");
+				.append(", user=").append(this.user).append(", cat=").append(this.cat).append(", listeEnc=")
+				.append(this.listeEnc).append(", ret=").append(this.ret).append("]");
 		return builder.toString();
 	}
 
