@@ -6,7 +6,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import fr.eni.projet.encheres.bo.Categorie;
-import fr.eni.projet.encheres.bo.Enchere;
 import fr.eni.projet.encheres.dal.ConnectionProvider;
 import fr.eni.projet.encheres.dal.DALException;
 import fr.eni.projet.encheres.dal.DAOCategorie;
@@ -27,7 +26,6 @@ public class CategorieDAOJdbcImpl extends DAOJdbcImpl<Categorie> implements DAOC
 
 	public CategorieDAOJdbcImpl() {
 		System.out.println("init CategorieJdbcImpl");
-		afficherTruc();
 		setSqlDeleteByID(sqlDeleteByID);
 		setSqlSelectAll(sqlSelectAll);
 		setSqlSelectByID(sqlSelectByID);
@@ -52,10 +50,6 @@ public class CategorieDAOJdbcImpl extends DAOJdbcImpl<Categorie> implements DAOC
 		Categorie categorie = new Categorie();
 		categorie.setId(rs.getInt("id"));
 		categorie.setNom(rs.getString("libelle"));
-		System.out.println(rs.getString("libelle"));
-		
-//			al.setNom(rs.getString(2));
-//			al.setIdRepas(3);
 		return categorie;
 	}
 
@@ -84,7 +78,7 @@ public class CategorieDAOJdbcImpl extends DAOJdbcImpl<Categorie> implements DAOC
 
 	@Override
 	public Categorie selectByNom(String libelle) throws DALException {
-		String sql = select id, libelle from Categories where libelle like?;
+		String sql = "select id, libelle from Categories where libelle like ?";
 		Categorie c = null;
 		try (Connection con = ConnectionProvider.getConnection(); PreparedStatement stmt = con.prepareStatement(sql);) {
 

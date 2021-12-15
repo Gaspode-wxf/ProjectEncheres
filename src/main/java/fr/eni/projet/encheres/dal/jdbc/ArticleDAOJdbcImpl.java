@@ -55,8 +55,8 @@ public class ArticleDAOJdbcImpl extends DAOJdbcImpl<Article> implements DAOArtic
 		stmt.setDate(index++, a.getDateFin());
 		stmt.setInt(index++, a.getPrixInitial());
 		stmt.setInt(index++, a.getPrixVente());
-		stmt.setInt(index++, a.getIdUtilisateur());
-		stmt.setInt(index++, a.getIdCategorie());
+		stmt.setInt(index++, a.getUtilisateur().getId());
+		stmt.setInt(index++, a.getCategorie().getId());
 
 		if (a.getId() != null) {
 			stmt.setInt(index++, a.getId());
