@@ -48,7 +48,7 @@ public class ServletSignIn extends HttpServlet {
 		} else {
 			request.setAttribute("pseudo", null);
 		}
-		RequestDispatcher rd = request.getRequestDispatcher("WEB-INF/Views/SignIn.jsp");
+		RequestDispatcher rd = request.getRequestDispatcher("WEB-INF/Views/user/SignIn.jsp");
 		rd.forward(request, response);
 	}
 
@@ -97,7 +97,7 @@ public class ServletSignIn extends HttpServlet {
 				session.setAttribute("user", ven);
 				session.setAttribute("connecte", (boolean)true);
 				session.setAttribute("pseudo", ven.getPseudo());
-				rd = request.getRequestDispatcher("WEB-INF/Views/accueil.jsp");
+				rd = request.getRequestDispatcher("ServletAccueil");
 
 				if (rem != null) {
 					remember = new Cookie("rem", pseudo);

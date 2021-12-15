@@ -4,22 +4,28 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+<!-- <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1" >
 <meta name="description" content="">
 <meta name="author" content="Will E. Cefes">
 
-<title>Mon profil</title>
 
-<!-- CSS -->
+
+CSS
 <link href="style/reset.css" rel="stylesheet">
-<link href="style/style.css" rel="stylesheet">
-
-
-
+<link href="style/style.css" rel="stylesheet"> -->
+<%@include file="/WEB-INF/Views/include/global/head.jspf"%>
+<title>Mon Profil</title>
 </head>
-<body>
-<header>Mon Profil</header>
+<header>
+<%@ include file = "/WEB-INF/Views/include/global/header.jspf" %>
+
+
+<h1 class="titrePage">Mon Profil</h1>
+
+
+
+</header>
 <main>
 <h1>Mon Profil</h1>
 
@@ -124,6 +130,6 @@
 </form>
 
 </main>
-<footer>copyright - Will E. Cefes </footer>
+<footer><%@ include file = "/WEB-INF/Views/include/global/footer.jspf" %> </footer>
 </body>
 </html>

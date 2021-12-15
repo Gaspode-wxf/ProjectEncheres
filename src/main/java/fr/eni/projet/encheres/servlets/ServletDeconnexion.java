@@ -1,6 +1,8 @@
 package fr.eni.projet.encheres.servlets;
 
 import java.io.IOException;
+
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -20,6 +22,10 @@ public class ServletDeconnexion extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 			HttpSession session = request.getSession(false);
+			session.setAttribute("connecte",(boolean)false);
+			session.removeAttribute("user");
+			RequestDispatcher rd = request.getRequestDispatcher("ServletAccueil");
+			rd.forward(request, response);
 			
 	
 	}

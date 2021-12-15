@@ -69,7 +69,8 @@ CSS
 
 
 
-</main> <footer> <%@ include file = "include/global/footer.jspf" %></footer>
+</main> 
+<footer> <%@ include file = "include/global/footer.jspf" %></footer>
 
 </body>
 </html>
