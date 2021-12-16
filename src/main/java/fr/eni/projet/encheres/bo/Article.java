@@ -55,8 +55,8 @@ public class Article {
 		this.prixInitial = prixInitial;
 		this.cat = cat;
 		this.cat.ajouterArticle(this);
-		
-		}
+
+	}
 
 	// Méthodes Utilisateur
 	public Vendeur getUtilisateur() {

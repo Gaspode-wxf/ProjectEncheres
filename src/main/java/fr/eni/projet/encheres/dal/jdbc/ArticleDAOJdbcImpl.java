@@ -17,7 +17,7 @@ import fr.eni.projet.encheres.dal.DALException;
 import fr.eni.projet.encheres.dal.DAOArticle;
 
 /**
- * @author Greg
+ * @author William
  *
  */
 public class ArticleDAOJdbcImpl extends DAOJdbcImpl<Article> implements DAOArticle {
@@ -28,17 +28,17 @@ public class ArticleDAOJdbcImpl extends DAOJdbcImpl<Article> implements DAOArtic
 	String sqlSelectAll = "select Articles.id as id, nomArticle, description, dateDebutEncheres, dateFinEncheres, prixInitial, prixVente, CATEGORIES.id as idCategorie, libelle, UTILISATEURS.id as idUtilisateur, pseudo, nom, prenom, email, telephone, rue, codePostal, ville from ARTICLES inner join UTILISATEURS on idUtilisateur=Utilisateurs.id inner join CATEGORIES on idCategorie=CATEGORIES.id";
 	String sqlUpdate = "update ARTICLES set nomArticle=?, description=?, dateDebutEncheres=?, dateFinEncheres=?, prixInitial=?, prixVente=?, idUtilisateur=?, idCategorie=?, where id=? ";
 	String sqlTruncate = "truncate table ARTICLES";
-	String sqlSelectByEnchereEnCours = sqlSelectAll +"where DATEDIFF(day,Articles.dateDebutEncheres, CURRENT_TIMESTAMP)>=0 and DATEDIFF(day,Articles.dateFinEncheres, CURRENT_TIMESTAMP)<0";
 
-	
-	
-	String sqlSelectByEnchereEnCoursByMotClef = sqlSelectByEnchereEnCours + "AND nomArticle like ?";
-	String sqlSelectByEnchereEnCoursByCategorie = sqlSelectByEnchereEnCours + "AND CATEGORIES.id=?";
-	
-	String sqlSelectByEnchereEnCoursByCategorieByMotClef = sqlSelectByEnchereEnCoursByCategorie + "AND nomArticle like ?";
-	
-	
-	String sqlSelectByUtilisateur = sqlSelectAll + "where UTILISATEURS.id=?";
+	String sqlByEnchereEnCours = "DATEDIFF(day,Articles.dateDebutEncheres, CURRENT_TIMESTAMP)>=0 and DATEDIFF(day, CURRENT_TIMESTAMP,Articles.dateFinEncheres)>0";
+	String sqlByUtilisateur = "UTILISATEURS.id=?";
+	String sqlByMotClef = "nomArticle like ?";
+	String sqlByCategorie = "CATEGORIES.id=?";
+
+	String sqlJoinEnchere = "INNER JOIN ENCHERES on ENCHERES.idArticle = ARTICLES.id";
+	String sqlByAcheteur = "and ENCHERES.idUtilisateur= ? ";
+	private String sqlJoinMax = "inner join (Select Encheres.idArticle, MAX(ENCHERES.montantEnchere) as prixMax from ENCHERES group by idArticle) encMax on ENCHERES.montantEnchere=prixMax";
+	private String sqlByEnchereTermine = "DATEDIFF(day, CURRENT_TIMESTAMP,Articles.dateFinEncheres)<0";
+	private String sqlByPasCommence = " DATEDIFF(day,Articles.dateDebutEncheres, CURRENT_TIMESTAMP)<0 ";
 
 	public ArticleDAOJdbcImpl() {
 		setSqlDeleteByID(sqlDeleteByID);
@@ -145,9 +145,34 @@ public class ArticleDAOJdbcImpl extends DAOJdbcImpl<Article> implements DAOArtic
 		}
 	}
 
+	// Requetes Select permettant de récupérer la liste des Articles dont l'enchère
+	// est en cours
+
 	@Override
-	public List<Article> selectByEnchereEnCoursByMotClef(String motClef) throws DALException {
-		String sql = sqlSelectByEnchereEnCoursByMotClef;
+	public List<Article> selectBy() throws DALException {
+		String sql = sqlSelectAll + " WHERE " + sqlByEnchereEnCours;
+		List<Article> liste = new ArrayList<Article>();
+		Article art = null;
+		try (Connection con = ConnectionProvider.getConnection();
+				Statement stmt = con.createStatement();
+				ResultSet rs = stmt.executeQuery(sql);) {
+
+			while (rs.next()) {
+
+				art = createFromRS(rs);
+				liste.add(art);
+			}
+		} catch (SQLException e) {
+			throw new DALException("erreur de requete Select All", e);
+		}
+		return liste;
+	}
+
+	// Ajouter une string à la requete permet de chercher par mot clef
+
+	@Override
+	public List<Article> selectBy(String motClef) throws DALException {
+		String sql = sqlSelectAll + " WHERE " + sqlByEnchereEnCours + " AND " + sqlByMotClef;
 		List<Article> liste = new ArrayList<Article>();
 		Article a = null;
 		try (Connection con = ConnectionProvider.getConnection(); PreparedStatement stmt = con.prepareStatement(sql);) {
@@ -163,13 +188,14 @@ public class ArticleDAOJdbcImpl extends DAOJdbcImpl<Article> implements DAOArtic
 		return liste;
 	}
 
+	// Ajouter une Categorie à la requete permet de chercher par Categorie
 	@Override
-	public List<Article> selectByEnchereEnCoursByCategorie(int idCategorie) throws DALException {
-		String sql = sqlSelectByEnchereEnCoursByCategorie;
+	public List<Article> selectBy(Categorie cat) throws DALException {
+		String sql = sqlSelectAll + " WHERE " + sqlByEnchereEnCours + " AND " + sqlByCategorie;
 		List<Article> liste = new ArrayList<Article>();
 		Article a = null;
 		try (Connection con = ConnectionProvider.getConnection(); PreparedStatement stmt = con.prepareStatement(sql);) {
-			stmt.setInt(1, idCategorie);
+			stmt.setInt(1, cat.getId());
 			ResultSet rs = stmt.executeQuery();
 			while (rs.next()) {
 				a = createFromRS(rs);
@@ -182,13 +208,16 @@ public class ArticleDAOJdbcImpl extends DAOJdbcImpl<Article> implements DAOArtic
 		return liste;
 	}
 
+	// Double filtre de recherche
+
 	@Override
-	public List<Article> selectByUtilisateur(int idUtilisateur) throws DALException {
-		String sql = sqlSelectByUtilisateur;
+	public List<Article> selectBy(Categorie cat, String motClef) throws DALException {
+		String sql = sqlSelectAll + " WHERE " + sqlByEnchereEnCours + "AND" + sqlByCategorie + " AND " + sqlByMotClef;
 		List<Article> liste = new ArrayList<Article>();
 		Article a = null;
 		try (Connection con = ConnectionProvider.getConnection(); PreparedStatement stmt = con.prepareStatement(sql);) {
-			stmt.setInt(1, idUtilisateur);
+			stmt.setInt(1, cat.getId());
+			stmt.setString(2, motClef);
 			ResultSet rs = stmt.executeQuery();
 			while (rs.next()) {
 				a = createFromRS(rs);
@@ -201,47 +230,155 @@ public class ArticleDAOJdbcImpl extends DAOJdbcImpl<Article> implements DAOArtic
 		return liste;
 	}
 
+	// Si on veut récup la liste des Articles en Vente actuellement proposés par un
+	// Vendeur précis
+
 	@Override
-	public List<Article> selectByEnchereEnCours() throws DALException {
-		String sql = sqlSelectByEnchereEnCours;
+	public List<Article> selectBy(Vendeur ven) throws DALException {
+		String sql = sqlSelectAll + " WHERE " + sqlByEnchereEnCours + "AND" + sqlByUtilisateur;
 		List<Article> liste = new ArrayList<Article>();
-		Article art = null;
-		try (Connection con = ConnectionProvider.getConnection();
-				Statement stmt = con.createStatement();
-				ResultSet rs = stmt.executeQuery(sql);) {
+		Article a = null;
+		try (Connection con = ConnectionProvider.getConnection(); PreparedStatement stmt = con.prepareStatement(sql);) {
 
+			stmt.setInt(1, ven.getId());
+			ResultSet rs = stmt.executeQuery();
 			while (rs.next()) {
-
-				art = createFromRS(rs);
-				liste.add(art);
+				a = createFromRS(rs);
 			}
+			liste.add(a);
+
 		} catch (SQLException e) {
-			throw new DALException("erreur de requete Select All", e);
+			throw new DALException("erreur de requête SelectAll", e);
 		}
 		return liste;
 	}
 
+	// TODO des variantes avec plus de filtres
+
 	@Override
-	public List<Article> selectByEnchereEnCoursByCategorieByMotClef(int idCategorie, String motClef)
-			throws DALException {
-		String sql = sqlSelectByEnchereEnCoursByCategorieByMotClef;
+	public List<Article> selectBy(Categorie cat, String mot, Vendeur ven) throws DALException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Article> selectBy(Categorie cat, Vendeur ven) throws DALException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Article> selectBy(String mot, Vendeur ven) throws DALException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	// obtenir uniquement les articles mis en vente par un Utilisateur précis
+
+	@Override
+	public List<Article> selectByUtilisateur(Vendeur ven) throws DALException {
+		String sql = sqlSelectAll + " WHERE " + sqlByUtilisateur;
 		List<Article> liste = new ArrayList<Article>();
-		Article art = null;
-		try (Connection con = ConnectionProvider.getConnection();
-				Statement stmt = con.createStatement();
-				ResultSet rs = stmt.executeQuery(sql);) {
-
+		Article a = null;
+		try (Connection con = ConnectionProvider.getConnection(); PreparedStatement stmt = con.prepareStatement(sql);) {
+			stmt.setInt(1, ven.getId());
+			ResultSet rs = stmt.executeQuery();
 			while (rs.next()) {
-
-				art = createFromRS(rs);
-				liste.add(art);
+				a = createFromRS(rs);
 			}
+			liste.add(a);
+
 		} catch (SQLException e) {
-			throw new DALException("erreur de requete Select All", e);
+			throw new DALException("erreur de requête SelectAll", e);
 		}
 		return liste;
 	}
-	
-	
+
+	// Liste des Articles dont l'enchère n'est pas encore ouverte et dont le vendeur
+	// est l'utilisateur
+	public List<Article> selectByFuturEnc(Vendeur ven) throws DALException {
+		String sql = sqlSelectAll + " WHERE " + sqlByUtilisateur + " AND " + sqlByPasCommence;
+		List<Article> liste = new ArrayList<Article>();
+		Article a = null;
+		try (Connection con = ConnectionProvider.getConnection(); PreparedStatement stmt = con.prepareStatement(sql);) {
+			stmt.setInt(1, ven.getId());
+			ResultSet rs = stmt.executeQuery();
+			while (rs.next()) {
+				a = createFromRS(rs);
+			}
+			liste.add(a);
+
+		} catch (SQLException e) {
+			throw new DALException("erreur de requête SelectAll", e);
+		}
+		return liste;
+	}
+
+	// Liste des Articles dont l'enchère est terminée et dont le vendeur est
+	// l'utilisateur
+	public List<Article> selectByPasseEnc(Vendeur ven) throws DALException {
+		String sql = sqlSelectAll + " WHERE " + sqlByUtilisateur + " AND " + sqlByEnchereTermine;
+		List<Article> liste = new ArrayList<Article>();
+		Article a = null;
+		try (Connection con = ConnectionProvider.getConnection(); PreparedStatement stmt = con.prepareStatement(sql);) {
+			stmt.setInt(1, ven.getId());
+			ResultSet rs = stmt.executeQuery();
+			while (rs.next()) {
+				a = createFromRS(rs);
+			}
+			liste.add(a);
+
+		} catch (SQLException e) {
+			throw new DALException("erreur de requête SelectAll", e);
+		}
+		return liste;
+	}
+
+	// Liste des Articles dont l'enchère est ouverte sur lesquels un Utilisateur a
+	// placé une enchère
+
+	public List<Article> selectByAcheteur(Vendeur ach) throws DALException {
+		String sql = sqlSelectAll + sqlJoinEnchere + " WHERE " + sqlByEnchereEnCours + sqlByAcheteur;
+
+		List<Article> liste = new ArrayList<Article>();
+		Article a = null;
+		try (Connection con = ConnectionProvider.getConnection(); PreparedStatement stmt = con.prepareStatement(sql);) {
+			stmt.setInt(1, ach.getId());
+			ResultSet rs = stmt.executeQuery();
+			while (rs.next()) {
+				a = createFromRS(rs);
+			}
+			liste.add(a);
+
+		} catch (SQLException e) {
+			throw new DALException("erreur de requête SelectAll", e);
+		}
+		return liste;
+
+	}
+
+	// Liste des Articles dont l'enchère est terminée sur lesquels un Utilisateur a
+	// placé la plus grosse enchère
+
+	public List<Article> selectAcquis(Vendeur ach) throws DALException {
+
+		String sql = sqlSelectAll + sqlJoinEnchere + sqlJoinMax + " WHERE " + sqlByEnchereTermine + sqlByAcheteur;
+
+		List<Article> liste = new ArrayList<Article>();
+		Article a = null;
+		try (Connection con = ConnectionProvider.getConnection(); PreparedStatement stmt = con.prepareStatement(sql);) {
+			stmt.setInt(1, ach.getId());
+			ResultSet rs = stmt.executeQuery();
+			while (rs.next()) {
+				a = createFromRS(rs);
+			}
+			liste.add(a);
+
+		} catch (SQLException e) {
+			throw new DALException("erreur de requête SelectAll", e);
+		}
+		return liste;
+
+	}
 
 }
