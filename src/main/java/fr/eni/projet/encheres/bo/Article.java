@@ -86,8 +86,15 @@ public class Article {
 	public void setListeEnchere(List<Enchere> listeEnc) {
 		this.listeEnc = listeEnc;
 		if (!listeEnc.isEmpty()) {
-			this.prixActuel = listeEnc.get(listeEnc.size() - 1).getMontantEnchere();
-			this.gagnant = listeEnc.get(listeEnc.size() - 1).getVendeur();
+			int max = 0;
+			for(Enchere enc : listeEnc) {
+				int valeur = enc.getMontantEnchere();
+				max = Math.max(valeur, max);
+				System.out.println(max);
+			}
+			
+			this.prixActuel = max;
+//			this.gagnant = listeEnc.get(listeEnc.size() - 1).getVendeur();
 
 		}
 	}

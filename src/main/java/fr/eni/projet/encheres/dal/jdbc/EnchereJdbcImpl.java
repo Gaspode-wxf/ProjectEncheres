@@ -37,7 +37,7 @@ public class EnchereJdbcImpl extends DAOJdbcImpl<Enchere> implements DAOEnchere 
 							+ "ville, motDePasse, credit, administrateur "
 							+ "from ENCHERES " 
 							+ "inner join ARTICLES on idArticle=Articles.id "
-							+ " inner join CATEGORIES on idCategorie=Categories.id"
+							+ " inner join CATEGORIES on Articles.idCategorie=Categories.id"
 							+ "inner join UTILISATEURS on ENCHERES.idUtilisateur=UTILISATEURS.id "
 							+ "where Encheres.idUtilisateur = ? AND idArticle = ?";
 	String sqlSelectAll = "select dateEnchere, montantEnchere, idArticle, nomArticle,"
@@ -56,8 +56,8 @@ public class EnchereJdbcImpl extends DAOJdbcImpl<Enchere> implements DAOEnchere 
 								+ " pseudo, nom, prenom, email, telephone, rue, codePostal, "
 								+ "ville, motDePasse, credit, administrateur "
 								+ "from ENCHERES "
-								+ "inner join CATEGORIES on idCategorie=Categories.id" 
-								+ "inner join ARTICLES on idArticle=Articles.id "
+								+ "inner join ARTICLES on idArticle=Articles.id " 
+								+ "inner join CATEGORIES on ARTICLES.idCategorie=Categories.id "
 								+ "inner join UTILISATEURS on ENCHERES.idUtilisateur=UTILISATEURS.id "
 								+ "where idArticle = ?";
 	private String sqlSelectByUser = "select dateEnchere, montantEnchere, idArticle, nomArticle,"

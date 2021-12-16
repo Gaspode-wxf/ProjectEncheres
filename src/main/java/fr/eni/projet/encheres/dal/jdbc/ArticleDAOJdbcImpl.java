@@ -8,6 +8,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import fr.eni.projet.encheres.bll.BLLException;
+import fr.eni.projet.encheres.bll.EnchereManager;
 import fr.eni.projet.encheres.bo.Adresse;
 import fr.eni.projet.encheres.bo.Article;
 import fr.eni.projet.encheres.bo.Categorie;
@@ -76,15 +78,74 @@ public class ArticleDAOJdbcImpl extends DAOJdbcImpl<Article> implements DAOArtic
 	public Article createFromRS(ResultSet rs) throws SQLException {
 
 		// génération de l'adresse
-		Adresse adr = new Adresse();
-
-		adr.setRue(rs.getString("rue"));
-		adr.setCodePostal(rs.getString("codePostal"));
-		adr.setVille("ville");
+		Adresse adr = genererAdresse(rs);
 
 		System.out.println("Génération adresse");
 
 		// génération du vendeur
+		Vendeur vendeur = genererVendeur(rs, adr);
+//		vendeur.setMdp(rs.getString("motDePasse"));
+//		vendeur.setCredit(rs.getInt("credit"));
+//		vendeur.setAdministrateur(rs.getBoolean("administreur"));
+
+		System.out.println("Génération vendeur");
+
+		// génération de la Categorie
+		Categorie cat = genererCategorie(rs);
+
+		System.out.println("Génération Catégorie");
+
+		// génération de l'article
+		Article a = genererArticle(rs, vendeur, cat);
+
+		System.out.println("Génération Article");
+		
+
+		return a;
+
+	}
+
+	/**
+	 * @param rs
+	 * @param vendeur
+	 * @param cat
+	 * @return
+	 * @throws SQLException
+	 */
+	public Article genererArticle(ResultSet rs, Vendeur vendeur, Categorie cat) throws SQLException {
+		Article a = new Article();
+
+		a.setId(rs.getInt("id"));
+		a.setNomArticle(rs.getString("nomArticle"));
+		a.setDescription(rs.getString("description"));
+		a.setDateDebut(rs.getDate("dateDebutEncheres"));
+		a.setDateFin(rs.getDate("dateFinEncheres"));
+		a.setPrixInitial(rs.getInt("prixInitial"));
+		a.setPrixVente(rs.getInt("prixVente"));
+		a.setCategorie(cat);
+		a.setUtilisateur(vendeur);
+		return a;
+	}
+
+	/**
+	 * @param rs
+	 * @return
+	 * @throws SQLException
+	 */
+	public Categorie genererCategorie(ResultSet rs) throws SQLException {
+		Categorie cat = new Categorie();
+		cat.setId(rs.getInt("idCategorie"));
+		cat.setNom(rs.getString("libelle"));
+		return cat;
+	}
+
+	/**
+	 * @param rs
+	 * @param adr
+	 * @return
+	 * @throws SQLException
+	 */
+	public Vendeur genererVendeur(ResultSet rs, Adresse adr) throws SQLException {
 		Vendeur vendeur = new Vendeur();
 
 		vendeur.setId(rs.getInt("idUtilisateur"));
@@ -94,34 +155,21 @@ public class ArticleDAOJdbcImpl extends DAOJdbcImpl<Article> implements DAOArtic
 		vendeur.setEmail(rs.getString("email"));
 		vendeur.setTelephone(rs.getString("telephone"));
 		vendeur.setAdresse(adr);
-//		vendeur.setMdp(rs.getString("motDePasse"));
-//		vendeur.setCredit(rs.getInt("credit"));
-//		vendeur.setAdministrateur(rs.getBoolean("administreur"));
+		return vendeur;
+	}
 
-		System.out.println("Génération vendeur");
+	/**
+	 * @param rs
+	 * @return
+	 * @throws SQLException
+	 */
+	public Adresse genererAdresse(ResultSet rs) throws SQLException {
+		Adresse adr = new Adresse();
 
-		// génération de la Categorie
-		Categorie cat = new Categorie();
-		cat.setId(rs.getInt("idCategorie"));
-		cat.setNom(rs.getString("libelle"));
-
-		System.out.println("Génération Catégorie");
-
-		// génération de l'article
-		Article a = new Article();
-
-		a.setId(rs.getInt("id"));
-		a.setNomArticle(rs.getString("nomArticle"));
-		a.setDescription(rs.getString("description"));
-		a.setDateDebut(rs.getDate("dateDebutEncheres"));
-		a.setDateFin(rs.getDate("dateFinEncheres"));
-		a.setCategorie(cat);
-		a.setUtilisateur(vendeur);
-
-		System.out.println("Génération Article");
-
-		return a;
-
+		adr.setRue(rs.getString("rue"));
+		adr.setCodePostal(rs.getString("codePostal"));
+		adr.setVille("ville");
+		return adr;
 	}
 
 	@Override
@@ -160,6 +208,17 @@ public class ArticleDAOJdbcImpl extends DAOJdbcImpl<Article> implements DAOArtic
 			while (rs.next()) {
 
 				art = createFromRS(rs);
+				//Recuperer Valeur Enchere Max sur l'Article
+				try {
+					EnchereManager EncMan = new EnchereManager();
+					art.setListeEnchere(EncMan.getEncheresArticle(art));
+					
+				} catch (BLLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				
 				liste.add(art);
 			}
 		} catch (SQLException e) {
