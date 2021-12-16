@@ -1,0 +1,7 @@
+#wrapper {
+    display:flex;
+}
+
+#menu-top a {
+    padding-left: 5px;
+}
