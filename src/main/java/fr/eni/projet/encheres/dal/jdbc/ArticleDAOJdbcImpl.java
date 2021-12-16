@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,6 +31,7 @@ public class ArticleDAOJdbcImpl extends DAOJdbcImpl<Article> implements DAOArtic
 	String sqlSelectByMotClef = "select Articles.id as id, nomArticle, description, dateDebutEncheres, dateFinEncheres, prixInitial, prixVente, CATEGORIES.id as idCategorie, libelle, UTILISATEURS.id as idUtilisateur, pseudo, nom, prenom, email, telephone, rue, codePostal, ville from ARTICLES inner join UTILISATEURS on idUtilisateur=Utilisateurs.id inner join CATEGORIES on  idCategorie=Categories.id where nomArticle like ?";
 	String sqlSelectByCategorie = "select Articles.id as id, nomArticle, description, dateDebutEncheres, dateFinEncheres, prixInitial, prixVente, CATEGORIES.id as idCategorie, libelle, UTILISATEURS.id as idUtilisateur, pseudo, nom, prenom, email, telephone, rue, codePostal, ville from ARTICLES inner join UTILISATEURS on idUtilisateur=Utilisateurs.id inner join CATEGORIES on idCategorie=CATEGORIES.id where CATEGORIES.id=?";
 	String sqlSelectByUtilisateur = "select Articles.id as id, nomArticle, description, dateDebutEncheres, dateFinEncheres, prixInitial, prixVente, CATEGORIES.id as idCategorie, libelle, UTILISATEURS.id as idUtilisateur, pseudo, nom, prenom, email, telephone, rue, codePostal, ville from ARTICLES inner join UTILISATEURS on idUtilisateur=Utilisateurs.id inner join CATEGORIES on idCategorie=CATEGORIES.id where UTILISATEURS.id=?";
+	private String sqlSelectByEnchereEnCours = "select Articles.id as id, nomArticle, description, dateDebutEncheres, dateFinEncheres, prixInitial, prixVente, CATEGORIES.id as idCategorie, libelle, UTILISATEURS.id as idUtilisateur, pseudo, nom, prenom, email, telephone, rue, codePostal, ville from ARTICLES inner join UTILISATEURS on idUtilisateur=Utilisateurs.id inner join CATEGORIES on idCategorie=CATEGORIES.id where DATEDIFF(day,Articles.dateDebutEncheres, CURRENT_TIMESTAMP)>=0 and DATEDIFF(day,Articles.dateFinEncheres, CURRENT_TIMESTAMP)<0";
 
 	public ArticleDAOJdbcImpl() {
 		setSqlDeleteByID(sqlDeleteByID);
@@ -188,6 +190,26 @@ public class ArticleDAOJdbcImpl extends DAOJdbcImpl<Article> implements DAOArtic
 
 		} catch (SQLException e) {
 			throw new DALException("erreur de requête SelectAll", e);
+		}
+		return liste;
+	}
+
+	@Override
+	public List<Article> selectByEnchereEnCours() throws DALException {
+		String sql = sqlSelectByEnchereEnCours;
+		List<Article> liste = new ArrayList<Article>();
+		Article art = null;
+		try (Connection con = ConnectionProvider.getConnection();
+				Statement stmt = con.createStatement();
+				ResultSet rs = stmt.executeQuery(sql);) {
+
+			while (rs.next()) {
+
+				art = createFromRS(rs);
+				liste.add(art);
+			}
+		} catch (SQLException e) {
+			throw new DALException("erreur de requete Select All", e);
 		}
 		return liste;
 	}

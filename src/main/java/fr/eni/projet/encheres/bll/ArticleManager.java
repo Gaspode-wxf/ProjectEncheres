@@ -112,5 +112,19 @@ public class ArticleManager implements AbstractManager<Article> {
 		}
 		return null;
 	}
+	
+	public List<Article> getListeArticlesEnCours() throws BLLException{
+		
+		List<Article> ListeArticlesEnCours = null;
+		try {
+			ListeArticlesEnCours = ((DAOArticle) this.daoArticle).selectByEnchereEnCours();
+		} catch (DALException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return ListeArticlesEnCours;
+		
+	}
 
 }

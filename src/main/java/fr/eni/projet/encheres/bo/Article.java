@@ -164,6 +164,7 @@ public class Article {
 
 	public void setPrixInitial(int prixInitial) {
 		this.prixInitial = prixInitial;
+		this.prixActuel = prixInitial;
 	}
 
 	public int getPrixVente() {

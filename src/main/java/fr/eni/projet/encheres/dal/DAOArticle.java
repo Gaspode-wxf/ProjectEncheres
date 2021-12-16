@@ -11,5 +11,7 @@ public interface DAOArticle extends DAO<Article> {
 	public List<Article> selectByCategorie(int idCategorie) throws DALException;
 
 	public List<Article> selectByUtilisateur(int idUtilisateur) throws DALException;
+	
+	public List<Article> selectByEnchereEnCours() throws DALException;
 
 }
