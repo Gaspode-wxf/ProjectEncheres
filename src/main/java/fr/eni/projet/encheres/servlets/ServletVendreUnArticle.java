@@ -3,6 +3,8 @@ package fr.eni.projet.encheres.servlets;
 import java.io.IOException;
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -40,6 +42,20 @@ public class ServletVendreUnArticle extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
+		CategorieManager catMan = null;
+		List<Categorie> listeCategorie = new ArrayList<Categorie>();
+		try {
+			catMan = new CategorieManager();
+			listeCategorie = catMan.getCatalogue();
+			request.setAttribute("listeCategorie", listeCategorie);
+
+		} catch (BLLException ex) {
+			// TODO Auto-generated catch block
+			ex.printStackTrace();
+		}
+		for (Categorie cat : listeCategorie) {
+			System.out.println(cat);
+		}
 		RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/Views/articles/vendreUnArticle.jsp");
 		rd.forward(request, response);
 	}
@@ -57,9 +73,15 @@ public class ServletVendreUnArticle extends HttpServlet {
 		String libelleCategorie = request.getParameter("categorie");
 
 		Categorie categorie = null;
+		CategorieManager catMan = null;
+		List<Categorie> listeCategorie = new ArrayList<Categorie>();
+
 		try {
-			CategorieManager catMan = new CategorieManager();
+			catMan = new CategorieManager();
 			categorie = catMan.getCategorieViaNom(libelleCategorie);
+			listeCategorie = catMan.getCatalogue();
+			request.setAttribute("listeCategorie", listeCategorie);
+
 		} catch (BLLException ex) {
 			// TODO Auto-generated catch block
 			ex.printStackTrace();
