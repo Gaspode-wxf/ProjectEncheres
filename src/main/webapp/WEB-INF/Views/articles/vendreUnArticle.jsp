@@ -1,18 +1,19 @@
 <%@page import="fr.eni.projet.encheres.bo.user.Vendeur"%>
 <%@page import="fr.eni.projet.encheres.bo.user.Utilisateur"%>
 <%@page import="fr.eni.projet.encheres.bo.Adresse"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
 <head>
-<%-- <%@include file="/WEB-INF/Views/include/global/head.jspf"%> --%>
+<%@include file="/WEB-INF/Views/include/global/head.jspf"%>
 <title>vendreUnArticle</title>
 </head>
 <body>
 <header>
-<%-- <%@ include file = "/WEB-INF/Views/include/global/header.jspf" %> --%>
+<%@ include file = "/WEB-INF/Views/include/global/header.jspf" %>
 <h1> Nouvelle Vente</h1>
 </header>
 
@@ -94,7 +95,7 @@
 </form>
 </body>
 <footer>
-<%-- <%@ include file = "/WEB-INF/Views/include/global/footer.jspf" %>  --%>
+<%@ include file = "/WEB-INF/Views/include/global/footer.jspf" %>
 </footer>
 
 </html>
