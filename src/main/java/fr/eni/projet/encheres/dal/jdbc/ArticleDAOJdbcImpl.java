@@ -28,10 +28,17 @@ public class ArticleDAOJdbcImpl extends DAOJdbcImpl<Article> implements DAOArtic
 	String sqlSelectAll = "select Articles.id as id, nomArticle, description, dateDebutEncheres, dateFinEncheres, prixInitial, prixVente, CATEGORIES.id as idCategorie, libelle, UTILISATEURS.id as idUtilisateur, pseudo, nom, prenom, email, telephone, rue, codePostal, ville from ARTICLES inner join UTILISATEURS on idUtilisateur=Utilisateurs.id inner join CATEGORIES on idCategorie=CATEGORIES.id";
 	String sqlUpdate = "update ARTICLES set nomArticle=?, description=?, dateDebutEncheres=?, dateFinEncheres=?, prixInitial=?, prixVente=?, idUtilisateur=?, idCategorie=?, where id=? ";
 	String sqlTruncate = "truncate table ARTICLES";
-	String sqlSelectByMotClef = "select Articles.id as id, nomArticle, description, dateDebutEncheres, dateFinEncheres, prixInitial, prixVente, CATEGORIES.id as idCategorie, libelle, UTILISATEURS.id as idUtilisateur, pseudo, nom, prenom, email, telephone, rue, codePostal, ville from ARTICLES inner join UTILISATEURS on idUtilisateur=Utilisateurs.id inner join CATEGORIES on  idCategorie=Categories.id where nomArticle like ?";
-	String sqlSelectByCategorie = "select Articles.id as id, nomArticle, description, dateDebutEncheres, dateFinEncheres, prixInitial, prixVente, CATEGORIES.id as idCategorie, libelle, UTILISATEURS.id as idUtilisateur, pseudo, nom, prenom, email, telephone, rue, codePostal, ville from ARTICLES inner join UTILISATEURS on idUtilisateur=Utilisateurs.id inner join CATEGORIES on idCategorie=CATEGORIES.id where CATEGORIES.id=?";
-	String sqlSelectByUtilisateur = "select Articles.id as id, nomArticle, description, dateDebutEncheres, dateFinEncheres, prixInitial, prixVente, CATEGORIES.id as idCategorie, libelle, UTILISATEURS.id as idUtilisateur, pseudo, nom, prenom, email, telephone, rue, codePostal, ville from ARTICLES inner join UTILISATEURS on idUtilisateur=Utilisateurs.id inner join CATEGORIES on idCategorie=CATEGORIES.id where UTILISATEURS.id=?";
-	private String sqlSelectByEnchereEnCours = "select Articles.id as id, nomArticle, description, dateDebutEncheres, dateFinEncheres, prixInitial, prixVente, CATEGORIES.id as idCategorie, libelle, UTILISATEURS.id as idUtilisateur, pseudo, nom, prenom, email, telephone, rue, codePostal, ville from ARTICLES inner join UTILISATEURS on idUtilisateur=Utilisateurs.id inner join CATEGORIES on idCategorie=CATEGORIES.id where DATEDIFF(day,Articles.dateDebutEncheres, CURRENT_TIMESTAMP)>=0 and DATEDIFF(day,Articles.dateFinEncheres, CURRENT_TIMESTAMP)<0";
+	String sqlSelectByEnchereEnCours = sqlSelectAll +"where DATEDIFF(day,Articles.dateDebutEncheres, CURRENT_TIMESTAMP)>=0 and DATEDIFF(day,Articles.dateFinEncheres, CURRENT_TIMESTAMP)<0";
+
+	
+	
+	String sqlSelectByEnchereEnCoursByMotClef = sqlSelectByEnchereEnCours + "AND nomArticle like ?";
+	String sqlSelectByEnchereEnCoursByCategorie = sqlSelectByEnchereEnCours + "AND CATEGORIES.id=?";
+	
+	String sqlSelectByEnchereEnCoursByCategorieByMotClef = sqlSelectByEnchereEnCoursByCategorie + "AND nomArticle like ?";
+	
+	
+	String sqlSelectByUtilisateur = sqlSelectAll + "where UTILISATEURS.id=?";
 
 	public ArticleDAOJdbcImpl() {
 		setSqlDeleteByID(sqlDeleteByID);
@@ -139,8 +146,8 @@ public class ArticleDAOJdbcImpl extends DAOJdbcImpl<Article> implements DAOArtic
 	}
 
 	@Override
-	public List<Article> selectByMotClef(String motClef) throws DALException {
-		String sql = sqlSelectByMotClef;
+	public List<Article> selectByEnchereEnCoursByMotClef(String motClef) throws DALException {
+		String sql = sqlSelectByEnchereEnCoursByMotClef;
 		List<Article> liste = new ArrayList<Article>();
 		Article a = null;
 		try (Connection con = ConnectionProvider.getConnection(); PreparedStatement stmt = con.prepareStatement(sql);) {
@@ -157,8 +164,8 @@ public class ArticleDAOJdbcImpl extends DAOJdbcImpl<Article> implements DAOArtic
 	}
 
 	@Override
-	public List<Article> selectByCategorie(int idCategorie) throws DALException {
-		String sql = sqlSelectByCategorie;
+	public List<Article> selectByEnchereEnCoursByCategorie(int idCategorie) throws DALException {
+		String sql = sqlSelectByEnchereEnCoursByCategorie;
 		List<Article> liste = new ArrayList<Article>();
 		Article a = null;
 		try (Connection con = ConnectionProvider.getConnection(); PreparedStatement stmt = con.prepareStatement(sql);) {
@@ -213,5 +220,28 @@ public class ArticleDAOJdbcImpl extends DAOJdbcImpl<Article> implements DAOArtic
 		}
 		return liste;
 	}
+
+	@Override
+	public List<Article> selectByEnchereEnCoursByCategorieByMotClef(int idCategorie, String motClef)
+			throws DALException {
+		String sql = sqlSelectByEnchereEnCoursByCategorieByMotClef;
+		List<Article> liste = new ArrayList<Article>();
+		Article art = null;
+		try (Connection con = ConnectionProvider.getConnection();
+				Statement stmt = con.createStatement();
+				ResultSet rs = stmt.executeQuery(sql);) {
+
+			while (rs.next()) {
+
+				art = createFromRS(rs);
+				liste.add(art);
+			}
+		} catch (SQLException e) {
+			throw new DALException("erreur de requete Select All", e);
+		}
+		return liste;
+	}
+	
+	
 
 }

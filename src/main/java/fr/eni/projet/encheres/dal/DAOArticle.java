@@ -6,12 +6,14 @@ import fr.eni.projet.encheres.bo.Article;
 
 public interface DAOArticle extends DAO<Article> {
 
-	public List<Article> selectByMotClef(String motClef) throws DALException;
+	public List<Article> selectByEnchereEnCoursByMotClef(String motClef) throws DALException;
 
-	public List<Article> selectByCategorie(int idCategorie) throws DALException;
+	public List<Article> selectByEnchereEnCoursByCategorie(int idCategorie) throws DALException;
 
 	public List<Article> selectByUtilisateur(int idUtilisateur) throws DALException;
 	
 	public List<Article> selectByEnchereEnCours() throws DALException;
+	
+	public List<Article> selectByEnchereEnCoursByCategorieByMotClef(int idCategorie, String motClef) throws DALException;
 
 }

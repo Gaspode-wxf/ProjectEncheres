@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import fr.eni.projet.encheres.bo.Article;
+import fr.eni.projet.encheres.bo.Categorie;
 import fr.eni.projet.encheres.dal.DALException;
 import fr.eni.projet.encheres.dal.DAO;
 import fr.eni.projet.encheres.dal.DAOArticle;
@@ -37,15 +38,6 @@ public class ArticleManager implements AbstractManager<Article> {
 	public List<Article> getCatalogueByIDUtilisateur(int idUtilisateur) throws BLLException {
 		try {
 			this.catalogue = ((DAOArticle) daoArticle).selectByUtilisateur(idUtilisateur);
-		} catch (DALException e) {
-			throw new BLLException("échec accès catalogue Utilisateur", e);
-		}
-		return catalogue;
-	}
-
-	public List<Article> getCatalogueByIDCategorie(int idCategorie) throws BLLException {
-		try {
-			this.catalogue = ((DAOArticle) daoArticle).selectByCategorie(idCategorie);
 		} catch (DALException e) {
 			throw new BLLException("échec accès catalogue Utilisateur", e);
 		}
@@ -113,18 +105,60 @@ public class ArticleManager implements AbstractManager<Article> {
 		return null;
 	}
 	
-	public List<Article> getListeArticlesEnCours() throws BLLException{
+	public List<Article> getListeEnCours() throws BLLException{
 		
-		List<Article> ListeArticlesEnCours = null;
+		List<Article> liste = null;
 		try {
-			ListeArticlesEnCours = ((DAOArticle) this.daoArticle).selectByEnchereEnCours();
+			liste = ((DAOArticle) this.daoArticle).selectByEnchereEnCours();
 		} catch (DALException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
-		return ListeArticlesEnCours;
+		return liste;
 		
 	}
+	
+public List<Article> getListeEnCours(Categorie cat) throws BLLException{
+		
+		List<Article> liste = null;
+		try {
+			liste = ((DAOArticle) this.daoArticle).selectByEnchereEnCoursByCategorie(cat.getId());
+		} catch (DALException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return liste;
+		
+	}
+
+public List<Article> getListeEnCours(String mot) throws BLLException{
+	
+	List<Article> liste = null;
+	try {
+		liste = ((DAOArticle) this.daoArticle).selectByEnchereEnCoursByMotClef(mot);
+	} catch (DALException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+	
+	return liste;
+	
+}
+
+public List<Article> getListeEnCours(Categorie cat, String mot) throws BLLException{
+	
+	List<Article> liste = null;
+	try {
+		liste = ((DAOArticle) this.daoArticle).selectByEnchereEnCoursByCategorieByMotClef(cat.getId(),mot);
+	} catch (DALException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+	
+	return liste;
+	
+}
 
 }
