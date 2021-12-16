@@ -7,13 +7,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import fr.eni.projet.encheres.bo.Article;
+import fr.eni.projet.encheres.bo.Categorie;
+import fr.eni.projet.encheres.bo.user.Vendeur;
 import fr.eni.projet.encheres.dal.DALException;
 import fr.eni.projet.encheres.dal.DAO;
 import fr.eni.projet.encheres.dal.DAOArticle;
 import fr.eni.projet.encheres.dal.DAOFactory;
 
 /**
- * @author Greg
+ * @author William
  *
  */
 public class ArticleManager implements AbstractManager<Article> {
@@ -30,24 +32,6 @@ public class ArticleManager implements AbstractManager<Article> {
 			this.catalogue = daoArticle.selectAll();
 		} catch (DALException e) {
 			throw new BLLException("échec accès catalogue", e);
-		}
-		return catalogue;
-	}
-
-	public List<Article> getCatalogueByIDUtilisateur(int idUtilisateur) throws BLLException {
-		try {
-			this.catalogue = ((DAOArticle) daoArticle).selectByUtilisateur(idUtilisateur);
-		} catch (DALException e) {
-			throw new BLLException("échec accès catalogue Utilisateur", e);
-		}
-		return catalogue;
-	}
-
-	public List<Article> getCatalogueByIDCategorie(int idCategorie) throws BLLException {
-		try {
-			this.catalogue = ((DAOArticle) daoArticle).selectByCategorie(idCategorie);
-		} catch (DALException e) {
-			throw new BLLException("échec accès catalogue Utilisateur", e);
 		}
 		return catalogue;
 	}
@@ -95,14 +79,6 @@ public class ArticleManager implements AbstractManager<Article> {
 		return a;
 	}
 
-	public void nettoyerBDD() throws BLLException {
-		try {
-			this.daoArticle.deleteAll();
-		} catch (DALException e) {
-			e.printStackTrace();
-		}
-	}
-
 	@Override
 	public Article getItem(int index) throws BLLException {
 		try {
@@ -111,6 +87,115 @@ public class ArticleManager implements AbstractManager<Article> {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	public List<Article> getListeEnCours() throws BLLException {
+
+		List<Article> liste = null;
+		try {
+			liste = ((DAOArticle) this.daoArticle).selectBy();
+		} catch (DALException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return liste;
+
+	}
+
+	public List<Article> getListeEnCours(String mot) throws BLLException {
+
+		List<Article> liste = null;
+		try {
+			liste = ((DAOArticle) this.daoArticle).selectBy(mot);
+		} catch (DALException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return liste;
+
+	}
+
+	public List<Article> getListeEnCours(Categorie cat) throws BLLException {
+
+		List<Article> liste = null;
+		try {
+			liste = ((DAOArticle) this.daoArticle).selectBy(cat);
+		} catch (DALException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return liste;
+
+	}
+
+	public List<Article> getListeEnCours(Categorie cat, String mot) throws BLLException {
+
+		List<Article> liste = null;
+		try {
+			liste = ((DAOArticle) this.daoArticle).selectBy(cat, mot);
+		} catch (DALException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return liste;
+
+	}
+
+	public List<Article> getListUtilisateur(Vendeur ven) throws BLLException {
+		try {
+			this.catalogue = ((DAOArticle) daoArticle).selectByUtilisateur(ven);
+		} catch (DALException e) {
+			throw new BLLException("échec accès catalogue Utilisateur", e);
+		}
+		return catalogue;
+	}
+
+	public List<Article> getArticlesFuturEnc(Vendeur ven) throws BLLException {
+		try {
+			this.catalogue = ((DAOArticle) daoArticle).selectByFuturEnc(ven);
+		} catch (DALException e) {
+			throw new BLLException("échec accès catalogue Utilisateur", e);
+		}
+		return catalogue;
+	}
+
+	public List<Article> getArticlesPasseEnc(Vendeur ven) throws BLLException {
+		try {
+			this.catalogue = ((DAOArticle) daoArticle).selectByPasseEnc(ven);
+		} catch (DALException e) {
+			throw new BLLException("échec accès catalogue Utilisateur", e);
+		}
+		return catalogue;
+	}
+
+	public List<Article> getArticlesEncheresEnCours(Vendeur ach) throws BLLException {
+		try {
+			this.catalogue = ((DAOArticle) daoArticle).selectByAcheteur(ach);
+		} catch (DALException e) {
+			throw new BLLException("échec accès catalogue Utilisateur", e);
+		}
+		return catalogue;
+	}
+
+	public List<Article> getArticlesAcquis(Vendeur ach) throws BLLException {
+		try {
+			this.catalogue = ((DAOArticle) daoArticle).selectAcquis(ach);
+		} catch (DALException e) {
+			throw new BLLException("échec accès catalogue Utilisateur", e);
+		}
+		return catalogue;
+	}
+
+	public void nettoyerBDD() throws BLLException {
+		try {
+			this.daoArticle.deleteAll();
+		} catch (DALException e) {
+			e.printStackTrace();
+		}
 	}
 
 }
