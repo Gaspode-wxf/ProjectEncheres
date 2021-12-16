@@ -4,6 +4,7 @@
 package fr.eni.projet.encheres.bo;
 
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,8 +56,8 @@ public class Article {
 		this.prixInitial = prixInitial;
 		this.cat = cat;
 		this.cat.ajouterArticle(this);
-
-	}
+		
+		}
 
 	// Méthodes Utilisateur
 	public Vendeur getUtilisateur() {
@@ -86,15 +87,8 @@ public class Article {
 	public void setListeEnchere(List<Enchere> listeEnc) {
 		this.listeEnc = listeEnc;
 		if (!listeEnc.isEmpty()) {
-			int max = 0;
-			for(Enchere enc : listeEnc) {
-				int valeur = enc.getMontantEnchere();
-				max = Math.max(valeur, max);
-				System.out.println(max);
-			}
-			
-			this.prixActuel = max;
-//			this.gagnant = listeEnc.get(listeEnc.size() - 1).getVendeur();
+			this.prixActuel = listeEnc.get(listeEnc.size() - 1).getMontantEnchere();
+			this.gagnant = listeEnc.get(listeEnc.size() - 1).getVendeur();
 
 		}
 	}
@@ -170,7 +164,6 @@ public class Article {
 
 	public void setPrixInitial(int prixInitial) {
 		this.prixInitial = prixInitial;
-		this.prixActuel = prixInitial;
 	}
 
 	public int getPrixVente() {

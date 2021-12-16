@@ -43,9 +43,8 @@ public class ServletAffichageListeArticle extends HttpServlet {
 			System.out.println("Manager Chargé");
 
 			List<Article> catalogueArticles = new ArrayList<Article>();
-			Article art = new Article();
-			
-			catalogueArticles = articleManager.getListeEnCours();
+
+			catalogueArticles = articleManager.getCatalogue();
 			System.out.println("catalogue chargé");
 			System.out.println("nbr d'entrée au catalogue : " + catalogueArticles.size());
 

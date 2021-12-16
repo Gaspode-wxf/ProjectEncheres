@@ -1,6 +1,5 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page import="fr.eni.projet.encheres.bo.Article"%>
-<%@page import="fr.eni.projet.encheres.bo.user.*"%>
 <%@page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 
@@ -18,9 +17,13 @@
 		<div class="article">
 		<ul>
 				<li>Nom : ${Article.nomArticle}</li>
-				<li>Prix : ${Article.prixActuel}</li>
+				<li>Description : ${Article.description}</li>
+				<li>Date début enchère : ${Article.dateDebut}</li>
 				<li>Date fin enchère : ${Article.dateFin}</li>
+				<li>Prix Initial : ${Article.prixInitial}</li>
+				<%-- <li>TODO dernière enchère</li> --%>
 				<li>Vendeur : ${Article.getUtilisateur().pseudo}</li>
+				<li>Catégorie : ${Article.getCategorie().nom}</li>
 			</ul> 
 			</div>
 			</div>

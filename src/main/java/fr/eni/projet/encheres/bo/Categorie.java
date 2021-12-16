@@ -1,8 +1,5 @@
 package fr.eni.projet.encheres.bo;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * @author Alexandre Mchich
  *
@@ -17,7 +14,6 @@ public class Categorie {
 
 	private Integer id;
 	private String nom;
-	private List<Article> listeArticle = new ArrayList<Article>();
 
 	public Categorie() {
 	}
@@ -28,7 +24,7 @@ public class Categorie {
 	}
 
 	public void ajouterArticle(Article article) {
-		this.listeArticle.add(article);
+		this.ajouterArticle(article);
 		// Méthode ajouter article
 
 	}
