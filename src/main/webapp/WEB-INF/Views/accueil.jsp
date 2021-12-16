@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
  <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@page import="fr.eni.projet.encheres.bo.Categorie"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -41,18 +42,19 @@ CSS
 </div>
 </c:if>
 <nav class="recherche">
-<form class="champRecherche">
-<input type="search" placeholder="Le nom de l'article contient" >
+<form class="champRecherche" action="" method="post">
+<input type="search" placeholder="Le nom de l'article contient" name="motClef" id="motClef" >
 <label for="categories">Choisissez une catégorie</label>
 <input list="categories" id="choixCategorie" name="choixCategorie">
 <datalist id="categories">
 
 	<option value="Toutes" selected>
-	<option value="Chiens">
-	<option value="Carottes">
-	<option value="Monocycles">
+	<c:forEach var="cat" items="${listeCat}">
+	
+	<option value="${cat.nom}">
+	
 
-
+</c:forEach>
 </datalist>
 
 <input type="submit" value="Valider" >

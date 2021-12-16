@@ -13,10 +13,14 @@ import javax.servlet.http.HttpServletResponse;
 
 import fr.eni.projet.encheres.bll.ArticleManager;
 import fr.eni.projet.encheres.bll.BLLException;
+import fr.eni.projet.encheres.bll.CategorieManager;
 import fr.eni.projet.encheres.bo.Article;
+import fr.eni.projet.encheres.bo.Categorie;
 
 /**
  * Servlet implementation class ServletTestDBArticle
+ * @author Greg
+ * @author Gaspode
  */
 @WebServlet("/ServletAffichageListeArticle")
 public class ServletAffichageListeArticle extends HttpServlet {
@@ -37,19 +41,48 @@ public class ServletAffichageListeArticle extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		System.out.println("ouverture Servlet");
+		
+		String motClef = (String) request.getAttribute("motClef");
+		Categorie cat = (Categorie) request.getAttribute("categorieComp");
+		
 		try {
 
 			ArticleManager articleManager = new ArticleManager();
 			System.out.println("Manager Chargé");
 
-			List<Article> catalogueArticles = new ArrayList<Article>();
-			Article art = new Article();
+			List<Article> catalogueArticles = null;
+			//reset Catalogue
 			
-			catalogueArticles = articleManager.getListeEnCours();
-			System.out.println("catalogue chargé");
-			System.out.println("nbr d'entrée au catalogue : " + catalogueArticles.size());
+		
+		
+		if(!motClef.isEmpty() && cat!=null) {
+			catalogueArticles = articleManager.getListeEnCours(cat, motClef);
+		}
+		else
+			if(motClef.isEmpty() && cat!=null) {
+				catalogueArticles = articleManager.getListeEnCours(cat);
+			}
+			else
+				if(!motClef.isEmpty() && cat==null) {
+					catalogueArticles = articleManager.getListeEnCours(motClef);
+				}
+				else
+					if(motClef.isEmpty() && cat==null) {
+						catalogueArticles = articleManager.getListeEnCours();
+					}
 
+		
+		
+			
+			
+		if(catalogueArticles.get(0)!=null) {
+			
 			request.setAttribute("catalogueArticles", catalogueArticles);
+			
+			}
+			
+			
+			
 		} catch (BLLException e) {
 			System.err.println(e);
 		}

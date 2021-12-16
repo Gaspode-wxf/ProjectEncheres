@@ -11,7 +11,7 @@
 <h1>Liste des Articles</h1>
 
 
-	<c:if test="${!empty catalogueArticles}">
+	<c:if test="${catalogueArticles!=null}">
 		<c:forEach var="Article" items="${catalogueArticles}">
 		
 		<div class="wrapper">
@@ -26,7 +26,7 @@
 			</div>
 		</c:forEach>
 	</c:if>
-	<c:if test="${empty catalogueArticles}">
+	<c:if test="${catalogueArticles==null}">
 		<p>Aucune liste d'articles.</p>
 	</c:if>
 </html>

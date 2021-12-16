@@ -80,25 +80,16 @@ public class ArticleDAOJdbcImpl extends DAOJdbcImpl<Article> implements DAOArtic
 		// génération de l'adresse
 		Adresse adr = genererAdresse(rs);
 
-		System.out.println("Génération adresse");
-
 		// génération du vendeur
 		Vendeur vendeur = genererVendeur(rs, adr);
-//		vendeur.setMdp(rs.getString("motDePasse"));
-//		vendeur.setCredit(rs.getInt("credit"));
-//		vendeur.setAdministrateur(rs.getBoolean("administreur"));
-
-		System.out.println("Génération vendeur");
 
 		// génération de la Categorie
 		Categorie cat = genererCategorie(rs);
 
-		System.out.println("Génération Catégorie");
 
 		// génération de l'article
 		Article a = genererArticle(rs, vendeur, cat);
 
-		System.out.println("Génération Article");
 		
 
 		return a;
