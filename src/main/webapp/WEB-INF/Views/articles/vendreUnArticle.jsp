@@ -7,12 +7,15 @@
 <!DOCTYPE html>
 <html>
 <head>
-<%@ include file = "/WEB-INF/Views/include/global/head.jspf" %>
+<%-- <%@include file="/WEB-INF/Views/include/global/head.jspf"%> --%>
 <title>vendreUnArticle</title>
 </head>
 <body>
-<header><%@ include file = "/WEB-INF/Views/include/global/header.jspf" %></header>
+<header>
+<%-- <%@ include file = "/WEB-INF/Views/include/global/header.jspf" %> --%>
 <h1> Nouvelle Vente</h1>
+</header>
+
 
 <form action="ServletVendreUnArticle" method="post">
 <table>
@@ -78,14 +81,20 @@
 		
 </table>
 
-		<!-- Bouton Enregistrer -->
+		<!-- Bouton Enregistrer - Création article dans la base de donnée -->
 <div>
 	<input type="submit" value="Créer">
-	<input type="submit" value="Annuler" formaction="ServletAccueil" formnovalidate="formnovalidate">
-
+	
+			<!-- Bouton Annuler - Reset des champs-->
+	<input type="reset" value="Annuler">
 </div>
-		<!-- Bouton Annuler -->
+
+
+
 </form>
 </body>
-<%@ include file = "/WEB-INF/Views/include/global/footer.jspf" %>
+<footer>
+<%-- <%@ include file = "/WEB-INF/Views/include/global/footer.jspf" %>  --%>
+</footer>
+
 </html>
