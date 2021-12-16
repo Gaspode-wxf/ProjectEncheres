@@ -41,7 +41,7 @@ public class ServletVendreUnArticle extends HttpServlet {
 			throws ServletException, IOException {
 
 		RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/Views/articles/vendreUnArticle.jsp");
-		rd.include(request, response);
+		rd.forward(request, response);
 	}
 
 	/**
@@ -50,6 +50,7 @@ public class ServletVendreUnArticle extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+
 		// récupération données formulaire
 		String nomArticle = request.getParameter("nomArticle");
 		String description = request.getParameter("description");
@@ -95,7 +96,6 @@ public class ServletVendreUnArticle extends HttpServlet {
 		} catch (BLLException e) {
 			e.printStackTrace();
 		}
-
 	}
 
 }
