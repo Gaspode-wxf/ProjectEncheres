@@ -1,1 +1,13 @@
 <div> <a href="ServletAccueil" > ENI-Enchères </a></div>
+
+<!-- affichage bandeau connecté si connecté ou bandeau déconecté si déconnecté -->
+<c:if test="${!sessionScope.connecte}">
+<div class="wrapper"> 
+<%@ include file="/WEB-INF/Views/include/user/fragmentBandeauUserNonConnecte.jspf" %>
+</div>
+</c:if>
+<c:if test="${sessionScope.connecte}">
+<div class="wrapper"> 
+<%@ include file="/WEB-INF/Views/include/user/fragmentBandeauUserConnecte.jspf" %>
+</div>
+</c:if>
